@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+    <!-- XXX-定时任务 -任务Object配置 -->
+	<bean id="demoTimerBean"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="demoTimerComp" />
+		<property name="targetMethod" value="demoTimerHandle" />
+	</bean>
+	<!-- XXX-定时任务 -触发器配置 -->
+	<bean id="demoTimerCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="demoTimerBean" />
+		<property name="cronExpression" value="${cronExpression.demoTimerJob}" />
+	</bean>
+	
+	<!-- 调度任务添加 -->
+	<bean name="timerTaskScheduler"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="applicationContextSchedulerContextKey" value="applicationContextKey" />
+		<property name="triggers">
+			<list>
+				<ref bean="demoTimerCronTrigger" />
+			</list>
+		</property>
+	</bean>
+</beans>
+
